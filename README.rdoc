@@ -1,3 +1,19 @@
+This is a forked repository.
+Yet another fork with removed autolinking.
+Plus ability to define custom formatters:
+
+class Article < ActiveRecord::Base
+  acts_as_textiled :body => ArticleFormatter, :abstract => [ArticleFormatter, :lite_mode]
+end
+
+module ArticleFormatter
+  include RedCloth::Formatters::HTML
+  
+  def h1(opts)
+    "<h1>#{opts[:text]}!!!</h1>"
+  end
+end
+
 = Acts as Textiled
 
 This simple plugin allows you to forget about constantly rendering Textile in 

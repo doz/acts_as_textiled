@@ -33,11 +33,14 @@ module Err
                     CGI.escapeHTML(match)
                   end
 
-                  str = auto_link(str, :all) do |txt|
-                    txt.size < 55 ? txt : truncate(txt, 50)
+                  rules = Array(ruled[attribute])
+                  formatter_index = rules.index { |rule| rule.is_a? Module }
+                  formatter = if formatter_index
+                    rules.delete_at(formatter_index)
+                  else
+                    RedCloth::Formatters::HTML
                   end
-
-                  str = RedCloth.new(str, Array(ruled[attribute])).to_html
+                  str = RedCloth.new(str, rules).to_format(formatter)
 
                   # preserve whitespace for haml
                   str = str.chomp("\n").gsub(/\n/, '&#x000A;').gsub(/\r/, '')
