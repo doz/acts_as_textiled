@@ -34,13 +34,14 @@ module Err
                   end
 
                   rules = Array(ruled[attribute])
-                  formatter_index = rules.index { |rule| rule.is_a? Module }
-                  formatter = if formatter_index
-                    rules.delete_at(formatter_index)
-                  else
-                    RedCloth::Formatters::HTML
+                  formatter = RedCloth::Formatters::HTML
+                  rules.each do |rule|
+                    if rule.is_a? Module
+                      formatter = rules.delete(rule)
+                      break
+                    end
                   end
-                  str = RedCloth.new(str, rules).to_format(formatter)
+                  str = RedCloth.new(str, rules).to(formatter)
 
                   # preserve whitespace for haml
                   str = str.chomp("\n").gsub(/\n/, '&#x000A;').gsub(/\r/, '')
